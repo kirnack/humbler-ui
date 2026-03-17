@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humble Bundle UI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark mb-0">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <i class="fa-solid fa-box-open me-2"></i>Humble Bundle UI
+            </span>
+            <div class="d-flex align-items-center gap-2">
+                <span id="auth-badge" class="badge bg-secondary">Checking...</span>
+                <button id="logout-btn" class="btn btn-sm btn-outline-light d-none" title="Change session key">
+                    <i class="fa-solid fa-key me-1"></i>Change Key
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Auth Section -->
+    <div id="auth-section" class="container my-5 d-none">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3">
+                            <i class="fa-solid fa-key me-2 text-warning"></i>Authentication Required
+                        </h5>
+                        <p class="card-text text-muted">
+                            Enter your Humble Bundle session key (<code>_simpleauth_sess</code> cookie).
+                            <a href="https://github.com/smbl64/humble-cli#-usage" target="_blank" rel="noopener noreferrer">
+                                How to find it?
+                            </a>
+                        </p>
+                        <div class="mb-3">
+                            <label for="session-key-input" class="form-label">Session Key</label>
+                            <input type="password" class="form-control font-monospace" id="session-key-input"
+                                   placeholder="Paste your _simpleauth_sess value here" autocomplete="off">
+                        </div>
+                        <button class="btn btn-primary" id="auth-btn">
+                            <i class="fa-solid fa-right-to-bracket me-1"></i>Authenticate
+                        </button>
+                        <div id="auth-error" class="text-danger mt-2 d-none"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bundle Section -->
+    <div id="bundle-section" class="container my-4 d-none">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h4 class="mb-0">Your Bundles</h4>
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" id="show-downloaded-toggle" checked>
+                    <label class="form-check-label" for="show-downloaded-toggle">Show downloaded</label>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" id="refresh-btn">
+                    <i class="fa-solid fa-rotate-right me-1"></i>Refresh
+                </button>
+            </div>
+        </div>
+
+        <div id="bundle-stats" class="d-none mb-3 text-muted small" id="stats-text"></div>
+
+        <div id="bundle-loading" class="text-center py-5 d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Fetching bundles from Humble Bundle…</p>
+        </div>
+
+        <div id="bundle-error" class="alert alert-danger d-none"></div>
+
+        <div id="bundle-grid" class="row g-3"></div>
+    </div>
+
+    <!-- Download Modal -->
+    <div class="modal fade" id="download-modal" tabindex="-1" aria-labelledby="download-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="download-modal-title">
+                        <i class="fa-solid fa-download me-2"></i>Downloading…
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="download-progress" class="mb-3 d-flex align-items-center gap-2">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        <span>Download in progress…</span>
+                    </div>
+                    <div id="download-output"
+                         class="bg-dark text-light rounded p-3"
+                         style="max-height:350px;overflow-y:auto;font-size:0.8rem;font-family:monospace;white-space:pre-wrap;word-break:break-all;min-height:80px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <div id="download-status-badge" class="me-auto"></div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index:1100">
+        <div id="app-toast" class="toast align-items-center border-0" role="alert" aria-live="assertive">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-body"></div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

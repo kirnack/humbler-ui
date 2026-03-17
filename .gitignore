@@ -67,3 +67,19 @@ yarn-debug.log*
 /storage/*
 !/storage/.keep
 /public/uploads
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Local runtime data (Docker volumes)
+/config/
+/downloads/

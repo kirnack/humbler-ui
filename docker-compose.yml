@@ -1,0 +1,16 @@
+services:
+  humbler-ui:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      # Persists the humble-cli session key across container restarts
+      - ./config:/config
+      # Where downloaded bundles are stored
+      - ./downloads:/downloads
+    environment:
+      # Optional: set HUMBLE_SESSION_KEY here to skip the web-based auth step.
+      # The value of the _simpleauth_sess cookie from humblebundle.com.
+      - HUMBLE_SESSION_KEY=${HUMBLE_SESSION_KEY:-}
+      - DOWNLOAD_DIR=/downloads
+    restart: unless-stopped
