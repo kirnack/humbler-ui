@@ -1,6 +1,6 @@
 # humbler-ui
 
-A containerized web UI for browsing and downloading your [Humble Bundle](https://www.humblebundle.com/) purchases.
+A containerized Ruby on Rails web UI for browsing and downloading your [Humble Bundle](https://www.humblebundle.com/) purchases.
 Built on top of [humble-cli](https://github.com/smbl64/humble-cli).
 
 ## Features
@@ -23,7 +23,7 @@ docker compose up --build -d
 
 ### 2. Open the UI
 
-Navigate to **http://localhost:5000** in your browser.
+Navigate to **http://localhost:3000** in your browser.
 
 ### 3. Authenticate
 
@@ -49,13 +49,31 @@ HUMBLE_SESSION_KEY="<your session key>" docker compose up -d
 |---|---|---|
 | `HUMBLE_SESSION_KEY` | *(empty)* | Humble Bundle session cookie value (optional at startup) |
 | `DOWNLOAD_DIR` | `/downloads` | Path inside the container where bundles are saved |
+| `SECRET_KEY_BASE` | auto-generated | Rails secret key base (auto-generated if not provided) |
 
 Docker Compose mounts:
 
 | Host path | Container path | Purpose |
 |---|---|---|
-| `./config` | `/config` | Stores the humble-cli session key |
+| `./humbler-config` | `/config` | Stores the humble-cli session key |
 | `./downloads` | `/downloads` | Downloaded bundle files |
+
+## Development
+
+### Prerequisites
+
+- Ruby 3.3+
+- Bundler
+- [humble-cli](https://github.com/smbl64/humble-cli) installed and authenticated
+
+### Running Locally
+
+```bash
+bundle install
+bundle exec rails server
+```
+
+Open **http://localhost:3000** in your browser.
 
 ## Updating
 

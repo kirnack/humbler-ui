@@ -72,9 +72,13 @@ async function doAuth() {
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Authenticating…';
 
     try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         const res = await fetch('/api/auth', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
             body: JSON.stringify({ session_key: key }),
         });
 
@@ -204,9 +208,13 @@ async function startDownload(bundleKey, bundleName) {
     downloadModal.show();
 
     try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         const res = await fetch('/api/download', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
             body: JSON.stringify({ key: bundleKey }),
         });
 
