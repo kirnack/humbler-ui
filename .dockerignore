@@ -1,0 +1,9 @@
+log/
+tmp/
+config/master.key
+config/credentials/
+.bundle/
+vendor/bundle/
+.git/
+humbler-config/
+downloads/
