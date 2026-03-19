@@ -27,7 +27,7 @@ class HumbleCli
   end
 
   # Returns an array of bundle hashes:
-  # { key:, name:, size:, claimed:, downloaded: }
+  # { key:, name:, size:, claimed:, downloaded:, category: }
   def list_bundles
     stdout, stderr, status = run(
       ["list", "--field", "key", "--field", "name", "--field", "size", "--field", "claimed"],
@@ -46,7 +46,8 @@ class HumbleCli
         name: name,
         size: size,
         claimed: claimed,
-        downloaded: downloaded?(name)
+        downloaded: downloaded?(name),
+        category: categorize(key, name)
       }
     end
   end
@@ -72,6 +73,20 @@ class HumbleCli
   end
 
   private
+
+  CATEGORY_PATTERNS = {
+    choice:   /choice/i,
+    books:    /\b(book|ebook|comic|manga)/i,
+    software: /\b(software|tool|dev|code|program)\b/i
+  }.freeze
+
+  def categorize(key, name)
+    text = "#{key} #{name}"
+    CATEGORY_PATTERNS.each do |cat, pattern|
+      return cat.to_s if text.match?(pattern)
+    end
+    "games"
+  end
 
   def run(args, timeout: 30)
     env = { "HOME" => @home_dir }
