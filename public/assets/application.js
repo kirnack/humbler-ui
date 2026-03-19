@@ -6,6 +6,7 @@ let downloadModal = null;
 let currentTaskId = null;
 let pollTimer = null;
 let allBundles = [];
+let activeCategory = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
     downloadModal = new bootstrap.Modal(document.getElementById('download-modal'));
@@ -17,6 +18,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('refresh-btn').addEventListener('click', loadBundles);
     document.getElementById('show-downloaded-toggle').addEventListener('change', renderBundles);
     document.getElementById('logout-btn').addEventListener('click', showAuthSection);
+
+    document.getElementById('category-filters').addEventListener('click', e => {
+        const btn = e.target.closest('[data-category]');
+        if (!btn) return;
+        document.querySelectorAll('#category-filters [data-category]').forEach(b => {
+            b.classList.remove('btn-primary', 'active');
+            b.classList.add('btn-outline-primary');
+        });
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-primary', 'active');
+        activeCategory = btn.dataset.category;
+        renderBundles();
+    });
 
     document.getElementById('download-modal').addEventListener('hidden.bs.modal', () => {
         if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
@@ -147,7 +161,10 @@ function renderBundles() {
         `${total} bundle(s) total · ${downloadedCount} downloaded · ${notDownloaded} not downloaded`;
     statsEl.classList.remove('d-none');
 
-    const visible = showDownloaded ? allBundles : allBundles.filter(b => !b.downloaded);
+    let visible = showDownloaded ? allBundles : allBundles.filter(b => !b.downloaded);
+    if (activeCategory !== 'all') {
+        visible = visible.filter(b => b.category === activeCategory);
+    }
 
     if (visible.length === 0) {
         grid.innerHTML = `
@@ -166,10 +183,18 @@ function renderBundles() {
     });
 }
 
+const CATEGORY_LABELS = {
+    games:    { icon: 'fa-gamepad',     label: 'Games',         bg: 'bg-primary'   },
+    choice:   { icon: 'fa-star',        label: 'Humble Choice', bg: 'bg-warning text-dark' },
+    books:    { icon: 'fa-book',        label: 'Books',         bg: 'bg-info text-dark'    },
+    software: { icon: 'fa-laptop-code', label: 'Software',      bg: 'bg-secondary'    }
+};
+
 function bundleCardHTML(bundle) {
     const isDownloaded = bundle.downloaded;
     const isClaimed = (bundle.claimed || '').toLowerCase() === 'yes';
     const cardClass = isDownloaded ? 'downloaded' : 'not-downloaded';
+    const cat = CATEGORY_LABELS[bundle.category] || CATEGORY_LABELS.games;
 
     return `
     <div class="col-sm-6 col-lg-4 col-xl-3">
@@ -179,6 +204,7 @@ function bundleCardHTML(bundle) {
                 <div class="mt-auto pt-2">
                     <div class="d-flex gap-1 flex-wrap mb-2">
                         <span class="badge bg-secondary">${escapeHtml(bundle.size)}</span>
+                        <span class="badge ${cat.bg}"><i class="fa-solid ${cat.icon} me-1"></i>${cat.label}</span>
                         ${isClaimed ? '<span class="badge bg-info text-dark">Keys Claimed</span>' : ''}
                         ${isDownloaded
                             ? '<span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Downloaded</span>'
